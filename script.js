@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function createDeleteButton(textElement) {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'X';
-        deleteButton.className = 'delete-button absolute -top-5 -right-5 bg-red-500 text-white px-2 py-0 rounded-full';
+        deleteButton.className = 'delete-button absolute -top-5 -right-5 bg-red-500 text-white px-2 py-0 rounded-full select-none';
         deleteButton.addEventListener('mousedown', preventBlur);
         deleteButton.addEventListener('click', () => handleDeleteClick(textElement));
         return deleteButton;
