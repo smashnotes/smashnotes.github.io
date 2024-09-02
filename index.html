@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMASHnotes</title>
-<link rel="shortcut icon" href="app-icon.png" type="image/x-icon" />
+<title>Smash Notes</title>
+<link rel="shortcut icon" href="https://easycss.github.io/favicon/favicon.png" type="image/x-icon" />
 <script src="tailwindcss.min.js"></script>
 <style>
   body {
     height: 100vh;
     overflow: hidden;
+    font-family: monospace;
     }
     .cursor {
         border-right: 2px solid black;
@@ -23,22 +24,42 @@
             border-color: black;
         }
     }
+    #page{
+      font-size: 20px;
+    }
+    .instruction-text{
+      font-size: 20px!important;
+    }
 </style>
 </head>
 <body>
-    <div class="flex justify-between space-x-2 m-1">
+    <div class="flex flex-col items-center md:items-start md:flex-row md:justify-between m-1">
+        <h1 class="mb-1 md:mb-0 text-xl text-black font-bold font-sans">SMASH<span class="text-red-600 italic">notes</span></h1>
 
-        <img class="h-10" src="smashnotes-logo.png" alt="smashnotes">
-
-        <div>
-          <button id="saveButton" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Save to File
+        <div class="mt-1">
+          <button id="textColorButton" class="w-32 px-4 py-2 rounded">
+              <!-- js inner text -->
           </button>
+
+          <button id="textBiggerButton" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+              +
+          </button>
+          <button id="textSmallerButton" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              -
+          </button>
+
           <button id="clearButton" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
               Clear All
           </button>
+
+          <button id="saveButton" class="hidden md:inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Save to File
+          </button>
         </div>
     
+    
+        <img class="mt-2 md:mt-0 mb-1 h-10 w-fit self-center invert" src="mvm-stamp.jpg" alt="smashnotes">
+
     </div>
 
  <div id="page" class="bg-white p-4 min-h-screen"></div>

@@ -1,9 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
     const page = document.getElementById('page');
-    const saveButton = document.getElementById('saveButton');
     const clearButton = document.getElementById('clearButton');
+    const textColorButton = document.getElementById('textColorButton');
+    const textBiggerButton = document.getElementById('textBiggerButton');
+    const textSmallerButton = document.getElementById('textSmallerButton');
     let activeTextElement = null;
-    let typingTimeout, editTimeout;
+    let typingTimeout;
+
+    // Initial setup
+    initializeFontSize(); // Load and apply the saved font size
+    initializeTextColor(); // Set up initial text color and button state
+
+    // Event listeners for buttons
+    textColorButton.addEventListener("click", toggleTextColor);
+    textBiggerButton.addEventListener("click", increaseFontSize);
+    textSmallerButton.addEventListener("click", decreaseFontSize);
 
     initialize();
 
@@ -13,10 +24,59 @@ document.addEventListener('DOMContentLoaded', function () {
         setupEventListeners();
     }
 
+    // Font size functions
+    function initializeFontSize() {
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            page.style.fontSize = savedFontSize;
+        } else {
+            page.style.fontSize = '16px'; // Default font size
+        }
+    }
+
+    function increaseFontSize() {
+        changeFontSize(2);
+    }
+
+    function decreaseFontSize() {
+        changeFontSize(-2);
+    }
+
+    function changeFontSize(amount) {
+        const currentFontSize = parseInt(window.getComputedStyle(page).fontSize);
+        const newFontSize = currentFontSize + amount;
+        page.style.fontSize = newFontSize + "px";
+        localStorage.setItem('fontSize', newFontSize + "px"); // Save the new font size to localStorage
+    }
+
+    // Text color functions
+    function initializeTextColor() {
+        document.body.style.color = "black";
+        textColorButton.innerText = "Red Text";
+        textColorButton.classList.add("bg-red-500", "text-white");
+    }
+
+    function toggleTextColor() {
+        const currentColor = document.body.style.color;
+
+        if (currentColor === "red") {
+            document.body.style.color = "black";
+            textColorButton.innerText = "Red Text";
+            textColorButton.classList.remove("bg-black");
+            textColorButton.classList.add("bg-red-500");
+        } else {
+            document.body.style.color = "red";
+            textColorButton.innerText = "Black Text";
+            textColorButton.classList.remove("bg-red-500");
+            textColorButton.classList.add("bg-black");
+        }
+    }
+
     function displayFirstLoadMessageIfNeeded() {
-        const entries = getTextEntries();
-        if (entries.length === 0) {
+        if (getTextEntries().length === 0) {
             showFirstLoadMessage();
+        } else {
+            removeFirstLoadMessage(); // Ensure the first load message is removed if there are entries
         }
     }
 
@@ -28,19 +88,40 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function removeFirstLoadMessage() {
+        const message = document.querySelector('.first-load-message');
+        if (message) {
+            message.remove();
+        }
+    }
+
     function createMessageElement() {
         const message = document.createElement('div');
         message.className = 'first-load-message';
         Object.assign(message.style, {
             position: 'absolute',
             left: '50%',
-            top: '50%',
+            top: '25%',
             transform: 'translate(-50%, -50%)',
-            padding: '20px',
-            zIndex: '1000'
+            padding: '0px',
+            zIndex: '1000',
+            width: '98%'
         });
-        message.innerHTML = `<p class="text-center -mt-16 mb-2">Click anywhere on the page and start typing to add your notes.</p><p class="text-center">Click an existing note to edit or delete it.</p>`;
-        return message;
+      message.innerHTML = `
+        <div class="instruction-text text-center">
+          <p class="mb-2">Click anywhere on the page</p>
+          <p class="instruction-text text-center mb-2">and start typing to add a note.</p>
+          
+          <p class="mb-2">Click an existing note to edit or delete it.</p>
+          <p class="mb-2">Use Shift + Enter to add line breaks in notes.</p>
+          
+          <p class="mt-8 mb-2 text-gray-300">Notes are stored on your machine only,</p>
+          <p class="mb-2 text-gray-300">keeping your data private.</p>
+
+          <p class="mt-16 text-gray-400">If you like this app you can support us</p>
+          <p class="text-gray-400">by playing: <a href="https://open.spotify.com/artist/66OsKKYin7yLMQUsZxjE91" target="_blank"><span class="text-gray-600">Matthew via Music</span></a> on Spotify.</p>
+        </div>`;
+      return message;
     }
 
     function removeMessageOnFirstClick(message) {
@@ -52,8 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadTextFromStorage() {
-        const entries = getTextEntries();
-        entries.forEach(entry => displayText(entry.text, entry.x, entry.y, entry.id));
+        getTextEntries().forEach(entry => displayText(entry.text, entry.x, entry.y, entry.id));
     }
 
     function getTextEntries() {
@@ -62,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setupEventListeners() {
         page.addEventListener('click', handlePageClick);
-        saveButton.addEventListener('click', saveToFile);
         clearButton.addEventListener('click', clearAll);
+        saveButton.addEventListener('click', saveToFile);
     }
 
     function handlePageClick(e) {
@@ -108,19 +188,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function resetCursorBlurTimeout() {
         clearTimeout(typingTimeout);
-        typingTimeout = setTimeout(() => this.blur(), 2000);
+        typingTimeout = setTimeout(() => this.blur(), 5000);
     }
 
     function setCursorBlurTimeout(cursor) {
-        typingTimeout = setTimeout(() => cursor.blur(), 2000);
+        typingTimeout = setTimeout(() => cursor.blur(), 5000);
     }
 
     function handleCursorBlur(cursor, x, y) {
-        if (cursor.innerText.trim() !== "") {
-            const textId = saveTextToStorage(cursor.innerText.trim(), x, y);
-            displayText(cursor.innerText.trim(), x, y, textId);
+        const text = cursor.innerText.trim();
+        if (text !== "") {
+            const textId = saveTextToStorage(text, x, y);
+            displayText(text, x, y, textId);
         }
         cursor.remove();
+        displayFirstLoadMessageIfNeeded(); // Check if the first load message should be shown after editing
     }
 
     function saveTextToStorage(text, x, y, id = null) {
@@ -159,7 +241,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         span.innerHTML = text.replace(/\n/g, '<br>');
         span.setAttribute('data-id', id);
-        span.classList.add('relative', 'group');
         span.addEventListener('click', handleTextClick);
         return span;
     }
@@ -178,7 +259,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const deleteButton = createDeleteButton(textElement);
         textElement.appendChild(deleteButton);
         makeTextEditable(textElement);
-        startEditTimeout(textElement);
+
+        // Start the blur timeout when entering the edit state
+        // setEditBlurTimeout(textElement);
     }
 
     function makeTextEditable(textElement) {
@@ -186,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
         textElement.focus();
 
         textElement.addEventListener('keydown', handleTextKeyDown);
-        textElement.addEventListener('input', resetEditTimeout);
+        textElement.addEventListener('input', resetEditBlurTimeout);
         textElement.addEventListener('blur', () => handleTextBlur(textElement));
     }
 
@@ -200,38 +283,36 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function resetEditBlurTimeout() {
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => saveTextAndExitEditState(this), 5000);
+    }
+
+    // function setEditBlurTimeout(textElement) {
+    //     typingTimeout = setTimeout(() => saveTextAndExitEditState(textElement), 5000);
+    // }
+
     function saveTextAndExitEditState(textElement) {
-        if (textElement.innerText.trim() !== "") {
+        const text = textElement.innerText.trim();
+        if (text === "") {
+            deleteTextFromStorage(textElement.getAttribute('data-id'));
+            textElement.remove();
+        } else {
             const id = textElement.getAttribute('data-id');
             const formattedText = textElement.innerHTML.replace(/<br>/g, '\n');
             saveTextToStorage(formattedText, parseInt(textElement.style.left), parseInt(textElement.style.top), id);
         }
         removeEditState(textElement);
-    }
-
-    function resetEditTimeout() {
-        clearTimeout(editTimeout);
-        startEditTimeout(this);
-    }
-
-    function startEditTimeout(textElement) {
-        editTimeout = setTimeout(() => {
-            if (activeTextElement === textElement) {
-                removeEditState(textElement);
-            }
-        }, 5000);
+        displayFirstLoadMessageIfNeeded(); // Check if the first load message should be shown after saving
     }
 
     function handleTextBlur(textElement) {
-        if (!textElement.classList.contains('pending-delete') && textElement.innerText.trim() !== "") {
+        if (!textElement.classList.contains('pending-delete')) {
             saveTextAndExitEditState(textElement);
-        } else {
-            removeEditState(textElement);
         }
     }
 
     function removeEditState(textElement) {
-        clearTimeout(editTimeout);
         textElement.classList.remove('border-2', 'border-gray-400');
         const deleteButton = textElement.querySelector('.delete-button');
         if (deleteButton) deleteButton.remove();
@@ -242,7 +323,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function createDeleteButton(textElement) {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'X';
-        deleteButton.className = 'delete-button absolute -top-5 -right-5 bg-red-500 text-white px-2 py-0 rounded-full select-none';
+        deleteButton.className = 'delete-button absolute -top-7 -right-5 text-red-500 p-1 rounded-full select-none';
+        deleteButton.setAttribute('type', 'button');
         deleteButton.addEventListener('mousedown', preventBlur);
         deleteButton.addEventListener('click', () => handleDeleteClick(textElement));
         return deleteButton;
@@ -267,7 +349,20 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('textEntries', JSON.stringify(entries));
     }
 
-    function saveToFile() {
+
+    function clearAll() {
+      if(getTextEntries().length > 0){
+        if (confirm('Are you sure you want to delete all data?')) {
+            localStorage.removeItem('textEntries');
+            page.innerHTML = '';
+            displayFirstLoadMessageIfNeeded(); // Ensure the first load message appears if everything is cleared
+          }
+      } else{
+        confirm('There is nothing to clear, except your mind :)')
+      }
+    }
+
+        function saveToFile() {
         const entries = getTextEntries();
         const textContent = entries.map(entry => entry.text).join('\n\n');
         const blob = new Blob([textContent], { type: 'text/plain' });
@@ -277,12 +372,5 @@ document.addEventListener('DOMContentLoaded', function () {
         a.click();
     }
 
-    function clearAll() {
-        if (confirm('Are you sure you want to delete all data?')) {
-            localStorage.removeItem('textEntries');
-            localStorage.removeItem('firstLoadMessageShown');
-            page.innerHTML = '';
-            displayFirstLoadMessageIfNeeded(); // Ensure the first load message appears if everything is cleared
-        }
-    }
 });
+
