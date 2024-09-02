@@ -30,6 +30,34 @@
     .instruction-text{
       font-size: 20px!important;
     }
+    
+    .socials{
+      display: flex;
+      justify-content: center;
+      margin: 6px 8px;
+      gap: .5rem;
+    }
+    /* SVG ICONS */
+    .socials img{
+      width: 30px;
+      height: auto;
+      filter: invert(.8);
+    }
+    .socials img:hover{
+      filter: invert(.1);
+    }
+
+      #spotify{
+      width: 100px;
+      margin-top: -2px;
+      filter: invert(1);
+    }
+
+    #spotify:hover{
+      filter: invert(0);
+    }
+  
+
 </style>
 </head>
 <body>
@@ -58,7 +86,20 @@
         </div>
     
     
-        <img class="mt-2 md:mt-0 mb-1 h-10 w-fit self-center invert" src="mvm-stamp.jpg" alt="smashnotes">
+        <div class="socials">
+      
+      <a href="https://github.com/smashnotes/smashnotes.github.io/issues" target="_blank">
+        <img src="https://raw.githubusercontent.com/mattheweq/icons-repo/main/github.svg">
+      </a>
+
+      <a href="https://open.spotify.com/artist/66OsKKYin7yLMQUsZxjE91" target="_blank">
+        <img id="spotify" src="https://raw.githubusercontent.com/mattheweq/icons-repo/main/mvm-stamp.jpg">
+      </a>
+
+      <a href="mailto:mattheweq8@gmail.com">
+        <img src="https://raw.githubusercontent.com/mattheweq/icons-repo/main/email.svg">
+      </a>
+    </div>
 
     </div>
 
