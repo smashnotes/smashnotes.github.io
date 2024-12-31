@@ -142,7 +142,10 @@ document.addEventListener('DOMContentLoaded', function () {
             position: 'absolute',
             left: `${x}px`,
             top: `${y}px`,
-            whiteSpace: 'pre-wrap'
+            whiteSpace: 'nowrap',
+            width: '0px',
+            height: '0px',
+            textAlign: 'left',
         });
         cursor.contentEditable = true;
         page.appendChild(cursor);
