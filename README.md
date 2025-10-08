@@ -2,4 +2,4 @@
 
 [LIVE SITE](https://smashnotes.github.io)
 
-![ALT:preview](preview.png)
+<!-- ![ALT:preview](preview.png) -->
