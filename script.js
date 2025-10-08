@@ -136,24 +136,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createTextCursor(x, y) {
-        const cursor = document.createElement('div');
-        cursor.className = 'cursor';
-        Object.assign(cursor.style, {
-            position: 'absolute',
-            left: `${x}px`,
-            top: `${y}px`,
-            whiteSpace: 'nowrap',
-            width: '0px',
-            height: '0px',
-            textAlign: 'left',
-        });
-        cursor.contentEditable = true;
-        page.appendChild(cursor);
-        cursor.focus();
+    const cursor = document.createElement('div');
+    cursor.className = 'cursor';
+    Object.assign(cursor.style, {
+        position: 'absolute',
+        left: `${x}px`,
+        top: `${y}px`,
+        minWidth: '1ch',
+        minHeight: '1em',
+        outline: 'none',
+        whiteSpace: 'pre-wrap',
+        textAlign: 'left',
+        background: 'transparent',
+        display: 'inline-block',
+        zIndex: '1000',
+    });
+    cursor.contentEditable = true;
+    page.appendChild(cursor);
 
-        addCursorEventListeners(cursor, x, y);
-        setCursorBlurTimeout(cursor);
-    }
+    // Delay focus slightly for Chrome layout
+    setTimeout(() => cursor.focus(), 10);
+
+    addCursorEventListeners(cursor, x, y);
+    setCursorBlurTimeout(cursor);
+}
+
 
     function addCursorEventListeners(cursor, x, y) {
         cursor.addEventListener('keydown', handleCursorKeyDown);
@@ -505,7 +512,7 @@ function createDeleteButton(textElement) {
     // Create a temporary anchor element to download the file
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'SMASHNotes.txt'; // Set the desired file name
+    a.download = 'notes.txt'; // Set the desired file name
     document.body.appendChild(a); // Append the anchor to the body
 
     // Trigger the download
