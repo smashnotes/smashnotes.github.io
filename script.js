@@ -93,9 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <p class="mt-96 md:mt-16 mb-2">Click anywhere on the page</p>
           <p class="instruction-text text-center mb-6">and start typing to add a note.</p>
           
-          <p class="mb-6"><span class="bg-[#ffff00]">Click drag</span> a note to move it.</p>
-          
-          <p class="mb-2">Click an existing note to edit or delete it.</p>
+          <p class="mb-2">Click an existing note to drag, edit or delete it.</p>
           <p class="mb-2">Press the Escape key <span class="text-red-500">(ESC)</span> to exit note editing</p>
           
           <p class="mt-8 mb-2 text-gray-500">Notes are stored on your machine only,</p>
@@ -136,30 +134,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createTextCursor(x, y) {
-    const cursor = document.createElement('div');
-    cursor.className = 'cursor';
-    Object.assign(cursor.style, {
-        position: 'absolute',
-        left: `${x}px`,
-        top: `${y}px`,
-        minWidth: '1ch',
-        minHeight: '1em',
-        outline: 'none',
-        whiteSpace: 'pre-wrap',
-        textAlign: 'left',
-        background: 'transparent',
-        display: 'inline-block',
-        zIndex: '1000',
-    });
-    cursor.contentEditable = true;
-    page.appendChild(cursor);
+        const cursor = document.createElement('div');
+        cursor.className = 'cursor';
+        Object.assign(cursor.style, {
+            position: 'absolute',
+            left: `${x}px`,
+            top: `${y}px`,
+            minWidth: '1ch',
+            minHeight: '1em',
+            outline: 'none',
+            whiteSpace: 'pre-wrap',
+            textAlign: 'left',
+            background: 'transparent',
+            display: 'inline-block',
+            zIndex: '1000',
+        });
+        cursor.contentEditable = true;
+        page.appendChild(cursor);
 
-    // Delay focus slightly for Chrome layout
-    setTimeout(() => cursor.focus(), 10);
+        cursor.focus();
 
-    addCursorEventListeners(cursor, x, y);
-    setCursorBlurTimeout(cursor);
-}
+        addCursorEventListeners(cursor, x, y);
+        setCursorBlurTimeout(cursor);
+    }
 
 
     function addCursorEventListeners(cursor, x, y) {
